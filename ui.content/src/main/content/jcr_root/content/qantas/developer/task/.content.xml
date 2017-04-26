@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="cq:Page">
+    <jcr:content
+            cq:designPath="/etc/designs/qantas"
+            cq:deviceGroups="[/etc/mobile/groups/responsive]"
+            jcr:primaryType="nt:unstructured"
+            jcr:title="qantas.developer.task"
+            sling:redirect="{Boolean}true"
+            sling:redirectStatus="{Long}302"
+            sling:resourceType="foundation/components/redirect">
+        <python-component
+                jcr:primaryType="nt:unstructured"
+                title="This is my Authored Title"
+                sling:resourceType="qantas/developer/task/components/python-component"/>
+    </jcr:content>
+</jcr:root>
