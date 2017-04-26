@@ -1,9 +1,7 @@
 package com.qantas.core.developer.task;
 
-import org.apache.felix.scr.annotations.Reference;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.api.scripting.SlingScriptHelper;
@@ -21,30 +19,35 @@ public class PythonScriptEngine extends AbstractSlingScriptEngine {
         super(scriptEngineFactory);
     }
 
-    @Reference
-    private ResourceResolver resourceResolver;
+    private static final ScriptEngineManager mgr = new ScriptEngineManager();
+    private static final ScriptEngine pyEngine = mgr.getEngineByName("python");
 
     @Override
     public Object eval(Reader reader, ScriptContext scriptContext) throws ScriptException {
         Bindings bindings = scriptContext.getBindings(ScriptContext.ENGINE_SCOPE);
         SlingScriptHelper helper = (SlingScriptHelper) bindings.get(SlingBindings.SLING);
-        final Writer writer = scriptContext.getWriter();
-        ScriptEngineManager mgr = new ScriptEngineManager();
-        ScriptEngine pyEngine = mgr.getEngineByName("python");
-        SlingHttpServletRequest request = helper.getRequest();
-        Resource contentResource = request.getResource();
-        ValueMap properties = contentResource.adaptTo(ValueMap.class);
+
         try {
+            bindingGlobalObjects(bindings);
+            final Writer writer = scriptContext.getWriter();
             scriptContext.setWriter(writer);
-            Resource dataResource = helper.getScript().getScriptResource();
-            InputStream is = dataResource.adaptTo(InputStream.class);
+            Resource scriptResource = helper.getScript().getScriptResource();
+            InputStream is = scriptResource.adaptTo(InputStream.class);
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            bindings.put("properties", properties);
             pyEngine.eval(br, scriptContext);
         } catch (Exception ex) {
             throw new ScriptException(ex);
         }
-
         return null;
+    }
+
+    private void bindingGlobalObjects(final Bindings bindings){
+        SlingScriptHelper helper = (SlingScriptHelper) bindings.get(SlingBindings.SLING);
+        SlingHttpServletRequest request = helper.getRequest();
+        Resource contentResource = request.getResource();
+        ValueMap properties = contentResource.adaptTo(ValueMap.class);
+        bindings.put("properties", properties);
+        // Put other global objects if necessary
+        // https://docs.adobe.com/docs/en/htl/docs/global-objects.html
     }
 }
