@@ -14,8 +14,9 @@ This project contains three modules:
 ## Install jython library (required)
 Make sure jython-standalon-2.7.0.jar has been added to java classpath before starting AEM Instance
 Ex:
+
     Run following command in unix OS to add the lib to java classpath:
-    export CLASSPATH=$CLASSPATH:/path/to/jython-standalon-2.7.0.jar
+    export CLASSPATH=$CLASSPATH:/path/to/jython-standalone-2.7.0.jar
 
     Or for Mac OS: copy jython-standalon-2.7.0.jar tp /Library/Java/Extensions/
 
